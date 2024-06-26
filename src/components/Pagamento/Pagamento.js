@@ -2,17 +2,13 @@ import React, { useState, useEffect } from 'react';
 import './Pagamento.css'; 
 import { useNavigate } from 'react-router-dom';
 
-
 function Pagamentos() {
   const [pagamentos, setPagamentos] = useState([]);
   const [promocoes, setPromocoes] = useState([]);
   const [assinaturas, setAssinaturas] = useState([]);
   const [pagamento, setPagamento] = useState({ valorPago: 0, codPromocao: null, codass: null });
-  const [editMode, setEditMode] = useState(false);
-  const [pagamentoId, setPagamentoId] = useState(null);
   const [dataPagamento, setDataPagamento] = useState('');
   const navigate = useNavigate();
-
 
   useEffect(() => {
     fetchPagamentos();
@@ -41,7 +37,7 @@ function Pagamentos() {
 
   const fetchPromocoes = async () => {
     try {
-      const response = await fetch('http://localhost:8080/promocoes');
+      const response = await fetch('http://localhost:8080/servcad/promocoes');
       const data = await response.json();
       if (Array.isArray(data)) {
         setPromocoes(data);
@@ -67,11 +63,6 @@ function Pagamentos() {
       console.error('Erro na requisição de assinaturas:', error);
       setAssinaturas([]);
     }
-  };
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setPagamento(prev => ({ ...prev, [name]: value }));
   };
 
   const handlePromocaoChange = (e) => {
@@ -106,32 +97,31 @@ function Pagamentos() {
     }
   };
 
-  const saveOrUpdatePagamento = async () => {
+  const savePagamento = async () => {
     if (!dataPagamento) {
       alert('Por favor, insira uma data válida.');
       return;
     }
 
-    const method = editMode ? 'PUT' : 'POST';
-    const endpoint = editMode ? `http://localhost:8080/servcad/pagamentos/${pagamentoId}` : 'http://localhost:8080/servcad/pagamentos';
+    const [ano, mes, dia] = dataPagamento.split('-');
 
     const pagamentoData = {
       ...pagamento,
-      dataPagamento: new Date(dataPagamento).toISOString().split('T')[0]
+      dia: parseInt(dia),
+      mes: parseInt(mes),
+      ano: parseInt(ano)
     };
 
     try {
-      const response = await fetch(endpoint, {
-        method,
+      const response = await fetch('http://localhost:8080/servcad/registrarpagamento', {
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(pagamentoData)
       });
 
       if (response.ok) {
         const updatedPagamento = await response.json();
-        setPagamentos(editMode ? pagamentos.map(p => p.id === updatedPagamento.id ? updatedPagamento : p) : [...pagamentos, updatedPagamento]);
-        setEditMode(false);
-        setPagamentoId(null);
+        setPagamentos([...pagamentos, updatedPagamento]);
         setPagamento({ valorPago: 0, codPromocao: null, codass: null });
         setDataPagamento('');
       } else {
@@ -141,14 +131,6 @@ function Pagamentos() {
       console.error('Erro ao salvar pagamento:', error);
       alert('Erro ao salvar pagamento');
     }
-  };
-
-  const editPagamento = (id) => {
-    const pag = pagamentos.find(p => p.id === id);
-    setEditMode(true);
-    setPagamentoId(id);
-    setPagamento(pag);
-    setDataPagamento(pag.dataPagamento);
   };
 
   const deletePagamento = async (id) => {
@@ -199,14 +181,13 @@ function Pagamentos() {
         <label>Data do Pagamento</label>
         <input type="date" className="input-field" name="dataPagamento" value={dataPagamento} onChange={e => setDataPagamento(e.target.value)} />
       </div>
-      <button className="button" onClick={saveOrUpdatePagamento}>{editMode ? 'Atualizar Pagamento' : 'Adicionar Pagamento'}</button>
+      <button className="button" onClick={savePagamento}>Adicionar Pagamento</button>
       <button onClick={() => navigate('/')}>Voltar</button>
 
       <ul className="pagamentos-list">
         {Array.isArray(pagamentos) && pagamentos.length > 0 ? pagamentos.map(pag => (
           <li key={pag.id} className="list-item">
             Valor: {pag.valorPago}, Data: {new Date(pag.dataPagamento).toLocaleDateString()}, Promoção: {pag.promocao ? pag.promocao.descricao : 'Nenhuma'}
-            <button className="button" onClick={() => editPagamento(pag.id)}>Editar</button>
             <button className="button" onClick={() => deletePagamento(pag.id)}>Deletar</button>
           </li>
         )) : <p>Nenhum pagamento encontrado.</p>}

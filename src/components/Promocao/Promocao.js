@@ -10,15 +10,23 @@ function Promocoes() {
   const [promocaoId, setPromocaoId] = useState(null);
   const navigate = useNavigate();
 
-
   useEffect(() => {
     fetchPromocoes();
   }, []);
 
   const fetchPromocoes = async () => {
-    const response = await fetch('http://localhost:8080/promocoes');
-    const data = await response.json();
-    setPromocoes(data);
+    try {
+      const response = await fetch('http://localhost:8080/servcad/promocoes');
+      const data = await response.json();
+      if (Array.isArray(data)) {
+        setPromocoes(data);
+      } else {
+        setPromocoes([]);
+      }
+    } catch (error) {
+      console.error('Error fetching promocoes:', error);
+      setPromocoes([]);
+    }
   };
 
   const handleInputChange = (e) => {
@@ -28,22 +36,26 @@ function Promocoes() {
 
   const saveOrUpdatePromocao = async () => {
     const method = editMode ? 'PUT' : 'POST';
-    const endpoint = editMode ? `http://localhost:8080/promocoes/${promocaoId}` : 'http://localhost:8080/promocoes';
+    const endpoint = editMode ? `http://localhost:8080/servcad/promocoes/${promocaoId}` : 'http://localhost:8080/servcad/promocoes';
 
-    const response = await fetch(endpoint, {
-      method,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(promocao)
-    });
+    try {
+      const response = await fetch(endpoint, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(promocao)
+      });
 
-    if (response.ok) {
-      const updatedPromocao = await response.json();
-      setPromocoes(editMode ? promocoes.map(p => p.id === updatedPromocao.id ? updatedPromocao : p) : [...promocoes, updatedPromocao]);
-      setEditMode(false);
-      setPromocaoId(null);
-      setPromocao({ descricao: '', diasExtras: 0, desconto: 0, validade: '', ativa: true });
-    } else {
-      alert('Falha ao salvar promoção');
+      if (response.ok) {
+        const updatedPromocao = await response.json();
+        setPromocoes(editMode ? promocoes.map(p => p.id === updatedPromocao.id ? updatedPromocao : p) : [...promocoes, updatedPromocao]);
+        setEditMode(false);
+        setPromocaoId(null);
+        setPromocao({ descricao: '', diasExtras: 0, desconto: 0, validade: '', ativa: true });
+      } else {
+        alert('Falha ao salvar promoção');
+      }
+    } catch (error) {
+      console.error('Error saving or updating promoção:', error);
     }
   };
 
@@ -57,14 +69,18 @@ function Promocoes() {
   const deletePromocao = async (id) => {
     if (!window.confirm('Deseja realmente excluir esta promoção?')) return;
 
-    const response = await fetch(`http://localhost:8080/promocoes/${id}`, {
-      method: 'DELETE'
-    });
+    try {
+      const response = await fetch(`http://localhost:8080/servcad/promocoes/${id}`, {
+        method: 'DELETE'
+      });
 
-    if (response.ok) {
-      setPromocoes(promocoes.filter(p => p.id !== id));
-    } else {
-      alert('Falha ao deletar promoção');
+      if (response.ok) {
+        setPromocoes(promocoes.filter(p => p.id !== id));
+      } else {
+        alert('Falha ao deletar promoção');
+      }
+    } catch (error) {
+      console.error('Error deleting promoção:', error);
     }
   };
 
@@ -97,7 +113,7 @@ function Promocoes() {
       <button onClick={() => navigate('/')}>Voltar</button>
 
       <ul className="promocoes-list">
-        {promocoes.map(promo => (
+        {Array.isArray(promocoes) && promocoes.map(promo => (
           <li key={promo.id} className="list-item">
             Descrição: {promo.descricao}, Dias Extras: {promo.diasExtras}, Desconto: {promo.desconto}%, Validade: {new Date(promo.validade).toLocaleDateString()}, Ativa: {promo.ativa ? 'Sim' : 'Não'}
             <button className="button" onClick={() => editPromocao(promo.id)}>Editar</button>

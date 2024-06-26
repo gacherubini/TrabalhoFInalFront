@@ -17,9 +17,14 @@ function Usuarios() {
       const response = await fetch('http://localhost:8080/servcad/usuarios');
       if (response.ok) {
         const data = await response.json();
-        setUsuarios(data);
+        console.log('Usuários recebidos:', data);
+        if (Array.isArray(data)) {
+          setUsuarios(data);
+        } else {
+          console.error('Os dados recebidos não são um array:', data);
+        }
       } else {
-        console.error('Falha ao buscar usuários');
+        console.error('Falha ao buscar usuários, status:', response.status);
       }
     } catch (error) {
       console.error('Erro na requisição de usuários:', error);
@@ -40,6 +45,7 @@ function Usuarios() {
     const endpoint = editMode ? `http://localhost:8080/servcad/usuarios/${usuarioId}` : 'http://localhost:8080/servcad/usuarios';
 
     try {
+      console.log('Enviando usuário:', JSON.stringify(usuario));
       const response = await fetch(endpoint, {
         method,
         headers: { 'Content-Type': 'application/json' },
@@ -47,12 +53,17 @@ function Usuarios() {
       });
       if (response.ok) {
         const updatedUser = await response.json();
-        setUsuarios(editMode ? usuarios.map(u => u.id === updatedUser.id ? updatedUser : u) : [...usuarios, updatedUser]);
+        console.log('Usuário salvo:', updatedUser);
+        setUsuarios(prev =>
+          editMode
+            ? prev.map(u => (u.id === updatedUser.id ? updatedUser : u))
+            : [...prev, updatedUser]
+        );
         setUsuario({ nome: '', email: '' });
         setEditMode(false);
         setUsuarioId(null);
       } else {
-        console.error('Falha ao salvar usuário');
+        console.error('Falha ao salvar usuário, status:', response.status);
       }
     } catch (error) {
       console.error('Erro ao salvar usuário:', error);
@@ -75,7 +86,7 @@ function Usuarios() {
       if (response.ok) {
         setUsuarios(usuarios.filter(u => u.id !== id));
       } else {
-        console.error('Falha ao deletar usuário');
+        console.error('Falha ao deletar usuário, status:', response.status);
       }
     } catch (error) {
       console.error('Erro ao deletar usuário:', error);

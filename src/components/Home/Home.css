@@ -1,30 +1,32 @@
 .home-container {
-    padding: 20px;
-    text-align: center;
-  }
-  
-  .home-container h1 {
-    margin-bottom: 20px;
-  }
-  
-  nav ul {
-    list-style-type: none;
-    padding: 0;
-  }
-  
-  nav ul li {
-    display: inline-block;
-    margin: 0 10px;
-  }
-  
-  nav ul li a {
-    text-decoration: none;
-    color: #4CAF50;
-    font-size: 1.2em;
-    transition: color 0.3s;
-  }
-  
-  nav ul li a:hover {
-    color: #388E3C;
-  }
-  
+  text-align: center;
+  padding: 50px;
+  background-color: #f9f9f9;
+}
+
+.home-container h1 {
+  font-size: 2.5em;
+  margin-bottom: 40px;
+  color: #333;
+}
+
+.home-container nav ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.home-container nav ul li {
+  display: inline;
+  margin: 0 15px;
+}
+
+.home-container nav ul li a {
+  text-decoration: none;
+  color: #4CAF50;
+  font-size: 1.2em;
+  transition: color 0.3s;
+}
+
+.home-container nav ul li a:hover {
+  color: #333;
+}
