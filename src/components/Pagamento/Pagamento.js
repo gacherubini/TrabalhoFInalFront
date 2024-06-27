@@ -18,9 +18,10 @@ function Pagamentos() {
     fetchAssinaturas();
   }, []);
 
-  useEffect(() => {
-    calcularValorPagamento();
-  }, [pagamento.codPromocao, pagamento.codass]);
+useEffect(() => {
+  calcularValorPagamento();
+  // eslint-disable-next-line
+}, [pagamento.codPromocao, pagamento.codass]);
 
   const fetchPagamentos = async () => {
     try {
