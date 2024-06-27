@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import './Cliente.css'; 
 
 function Clientes() {
   const [clientes, setClientes] = useState([]);
@@ -22,6 +24,7 @@ function Clientes() {
       console.error(error);
       console.error(error.message);
       setErro('Erro ao buscar clientes');
+      toast.error('Erro ao buscar clientes');
     }
   };
 
@@ -37,14 +40,14 @@ function Clientes() {
       });
       
       if (response.ok) {
-        alert('Cliente adicionado com sucesso!');
-        fetchClientes(); // Atualiza a lista de clientes
+        toast.success('Cliente adicionado com sucesso!');
+        fetchClientes(); 
       } else {
         throw new Error('Erro ao adicionar cliente');
       }
     } catch (error) {
       console.error(error);
-      alert('Erro ao adicionar cliente');
+      toast.error('Erro ao adicionar cliente');
     }
   };
 
@@ -60,14 +63,14 @@ function Clientes() {
       });
 
       if (response.ok) {
-        alert('Cliente atualizado com sucesso!');
+        toast.success('Cliente atualizado com sucesso!');
         fetchClientes();
       } else {
         throw new Error('Erro ao atualizar cliente');
       }
     } catch (error) {
       console.error(error);
-      alert('Erro ao atualizar cliente');
+      toast.error('Erro ao atualizar cliente');
     }
   };
 
@@ -78,14 +81,14 @@ function Clientes() {
       });
 
       if (response.ok) {
-        alert('Cliente deletado com sucesso!');
+        toast.success('Cliente deletado com sucesso!');
         fetchClientes(); 
       } else {
         throw new Error('Erro ao deletar cliente');
       }
     } catch (error) {
       console.error(error);
-      alert('Erro ao deletar cliente');
+      toast.error('Erro ao deletar cliente');
     }
   };
 
@@ -94,7 +97,8 @@ function Clientes() {
   }, []);
 
   return (
-    <div>
+    <div className="clientes-container">
+      <ToastContainer />
       <h1>Clientes</h1>
       {erro && <p style={{ color: 'red' }}>{erro}</p>}
       <input
@@ -115,9 +119,11 @@ function Clientes() {
       <ul>
         {clientes.map(cliente => (
           <li key={cliente.id}>
-            {cliente.nome} - {cliente.email}
-            <button onClick={() => handleUpdateCliente(cliente.id)}>Editar</button>
-            <button onClick={() => handleDeleteCliente(cliente.id)}>Deletar</button>
+            <span>{cliente.nome} - {cliente.email}</span>
+            <div className="button-group">
+              <button className="button" onClick={() => handleUpdateCliente(cliente.id)}>Editar</button>
+              <button className="button" onClick={() => handleDeleteCliente(cliente.id)}>Deletar</button>
+            </div>
           </li>
         ))}
       </ul>

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-
 import './Promocao.css';
 
 function Promocoes() {
@@ -110,14 +109,16 @@ function Promocoes() {
         </label>
       </div>
       <button className="button" onClick={saveOrUpdatePromocao}>{editMode ? 'Atualizar Promoção' : 'Adicionar Promoção'}</button>
-      <button onClick={() => navigate('/')}>Voltar</button>
+      <button className="button" onClick={() => navigate('/')}>Voltar</button>
 
       <ul className="promocoes-list">
         {Array.isArray(promocoes) && promocoes.map(promo => (
           <li key={promo.id} className="list-item">
-            Descrição: {promo.descricao}, Dias Extras: {promo.diasExtras}, Desconto: {promo.desconto}%, Validade: {new Date(promo.validade).toLocaleDateString()}, Ativa: {promo.ativa ? 'Sim' : 'Não'}
-            <button className="button" onClick={() => editPromocao(promo.id)}>Editar</button>
-            <button className="button" onClick={() => deletePromocao(promo.id)}>Deletar</button>
+            <span>Descrição: {promo.descricao}, Dias Extras: {promo.diasExtras}, Desconto: {promo.desconto}%, Validade: {new Date(promo.validade).toLocaleDateString()}, Ativa: {promo.ativa ? 'Sim' : 'Não'}</span>
+            <div className="button-group">
+              <button className="button" onClick={() => editPromocao(promo.id)}>Editar</button>
+              <button className="button" onClick={() => deletePromocao(promo.id)}>Deletar</button>
+            </div>
           </li>
         ))}
       </ul>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import './Assinatura.css';
 
 function Assinaturas() {
   const [assinaturas, setAssinaturas] = useState([]);
@@ -9,6 +10,8 @@ function Assinaturas() {
   const [selectedAplicativo, setSelectedAplicativo] = useState('');
   const [editMode, setEditMode] = useState(false);
   const [currentAssinaturaId, setCurrentAssinaturaId] = useState(null);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
 
   const navigate = useNavigate();
 
@@ -29,6 +32,7 @@ function Assinaturas() {
       }
     } catch (error) {
       console.error('Erro na requisição de assinaturas:', error);
+      setError('Erro ao buscar assinaturas');
     }
   };
 
@@ -43,6 +47,7 @@ function Assinaturas() {
       }
     } catch (error) {
       console.error('Erro na requisição de clientes:', error);
+      setError('Erro ao buscar clientes');
     }
   };
 
@@ -57,6 +62,7 @@ function Assinaturas() {
       }
     } catch (error) {
       console.error('Erro na requisição de aplicativos:', error);
+      setError('Erro ao buscar aplicativos');
     }
   };
 
@@ -80,7 +86,8 @@ function Assinaturas() {
       });
 
       if (response.ok) {
-        alert('Assinatura salva com sucesso!');
+        setSuccess('Assinatura salva com sucesso!');
+        setError('');
         fetchAssinaturas();
         clearForm();
       } else {
@@ -88,7 +95,8 @@ function Assinaturas() {
       }
     } catch (error) {
       console.error('Erro ao salvar ou atualizar assinatura:', error);
-      alert('Erro ao salvar ou atualizar assinatura');
+      setError('Erro ao salvar ou atualizar assinatura');
+      setSuccess('');
     }
   };
 
@@ -100,14 +108,16 @@ function Assinaturas() {
         });
 
         if (response.ok) {
-          alert('Assinatura deletada com sucesso!');
+          setSuccess('Assinatura deletada com sucesso!');
+          setError('');
           fetchAssinaturas();
         } else {
           throw new Error('Falha ao deletar assinatura');
         }
       } catch (error) {
         console.error('Erro ao deletar assinatura:', error);
-        alert('Erro ao deletar assinatura');
+        setError('Erro ao deletar assinatura');
+        setSuccess('');
       }
     }
   };
@@ -127,10 +137,12 @@ function Assinaturas() {
   };
 
   return (
-    <div>
-      <h1>Gerenciar Assinaturas</h1>
+    <div className="assinaturas-container">
+      <h1 className="header">Gerenciar Assinaturas</h1>
+      {error && <p className="error-message">{error}</p>}
+      {success && <p className="success-message">{success}</p>}
       <div>
-        <select value={selectedCliente} onChange={(e) => setSelectedCliente(e.target.value)}>
+        <select className="input-field" value={selectedCliente} onChange={(e) => setSelectedCliente(e.target.value)}>
           <option value="">Selecione o Cliente</option>
           {clientes.map((cliente) => (
             <option key={cliente.id} value={cliente.id}>
@@ -138,7 +150,7 @@ function Assinaturas() {
             </option>
           ))}
         </select>
-        <select value={selectedAplicativo} onChange={(e) => setSelectedAplicativo(e.target.value)}>
+        <select className="input-field" value={selectedAplicativo} onChange={(e) => setSelectedAplicativo(e.target.value)}>
           <option value="">Selecione o Aplicativo</option>
           {aplicativos.map((aplicativo) => (
             <option key={aplicativo.id} value={aplicativo.id}>
@@ -146,17 +158,19 @@ function Assinaturas() {
             </option>
           ))}
         </select>
-        <button onClick={handleCreateOrUpdateAssinatura}>{editMode ? 'Atualizar Assinatura' : 'Salvar Assinatura'}</button>
-        <button onClick={clearForm}>Cancelar</button>
-        <button onClick={() => navigate('/')}>Voltar</button>
+        <button className="button" onClick={handleCreateOrUpdateAssinatura}>{editMode ? 'Atualizar Assinatura' : 'Salvar Assinatura'}</button>
+        <button className="button cancel" onClick={clearForm}>Cancelar</button>
+        <button className="button cancel" onClick={() => navigate('/')}>Voltar</button>
       </div>
-      <h2>Lista de Assinaturas</h2>
-      <ul>
+      <h2 className="header">Lista de Assinaturas</h2>
+      <ul className="assinaturas-list">
         {assinaturas.map((assinatura) => (
-          <li key={assinatura.id}>
+          <li key={assinatura.id} className="list-item">
             Cliente: {assinatura.cliente.nome}, Aplicativo: {assinatura.aplicativo.nome}, Início: {assinatura.inicioVigencia}, Fim: {assinatura.fimVigencia}
-            <button onClick={() => handleEdit(assinatura)}>Editar</button>
-            <button onClick={() => handleDeleteAssinatura(assinatura.id)}>Deletar</button>
+            <div className="button-group">
+              <button className="button button-edit" onClick={() => handleEdit(assinatura)}>Editar</button>
+              <button className="button button-delete" onClick={() => handleDeleteAssinatura(assinatura.id)}>Deletar</button>
+            </div>
           </li>
         ))}
       </ul>

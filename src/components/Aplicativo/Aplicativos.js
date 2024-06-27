@@ -1,104 +1,142 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import './Aplicativos.css';
 
 function Aplicativos() {
   const [aplicativos, setAplicativos] = useState([]);
   const [nome, setNome] = useState('');
   const [custoMensal, setCustoMensal] = useState('');
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch('http://localhost:8080/servcad/aplicativos')
-      .then(response => response.json())
-      .then(data => setAplicativos(data));
+    fetchAplicativos();
   }, []);
+
+  const fetchAplicativos = async () => {
+    try {
+      const response = await fetch('http://localhost:8080/servcad/aplicativos');
+      const data = await response.json();
+      setAplicativos(data);
+    } catch (error) {
+      console.error('Erro ao buscar aplicativos:', error);
+      setError('Erro ao buscar aplicativos');
+    }
+  };
 
   const handleAddAplicativo = async () => {
     const aplicativo = { nome, custoMensal };
 
-    const response = await fetch('http://localhost:8080/servcad/aplicativos', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(aplicativo),
-    });
+    try {
+      const response = await fetch('http://localhost:8080/servcad/aplicativos', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(aplicativo),
+      });
 
-    if (response.ok) {
-      alert('Aplicativo adicionado com sucesso!');
-      setNome('');
-      setCustoMensal('');
-      fetch('http://localhost:8080/servcad/aplicativos')
-        .then(response => response.json())
-        .then(data => setAplicativos(data));
-    } else {
-      alert('Erro ao adicionar aplicativo');
+      if (response.ok) {
+        setSuccess('Aplicativo adicionado com sucesso!');
+        setError('');
+        setNome('');
+        setCustoMensal('');
+        fetchAplicativos();
+      } else {
+        throw new Error('Erro ao adicionar aplicativo');
+      }
+    } catch (error) {
+      console.error('Erro ao adicionar aplicativo:', error);
+      setError('Erro ao adicionar aplicativo');
+      setSuccess('');
     }
   };
 
   const handleDeleteAplicativo = async (id) => {
-    const response = await fetch(`http://localhost:8080/servcad/aplicativos/${id}`, {
-        method: 'DELETE'
-    });
+    try {
+      const response = await fetch(`http://localhost:8080/servcad/aplicativos/${id}`, {
+        method: 'DELETE',
+      });
 
-    if (response.ok) {
-      alert('Aplicativo deletado com sucesso!');
-      setAplicativos(aplicativos.filter(aplicativo => aplicativo.id !== id));
-    } else {
-        console.log(response);
-        console.log(response.status);
-      alert('Erro ao deletar aplicativo');
+      if (response.ok) {
+        setSuccess('Aplicativo deletado com sucesso!');
+        setError('');
+        setAplicativos(aplicativos.filter(aplicativo => aplicativo.id !== id));
+      } else {
+        throw new Error('Erro ao deletar aplicativo');
+      }
+    } catch (error) {
+      console.error('Erro ao deletar aplicativo:', error);
+      setError('Erro ao deletar aplicativo');
+      setSuccess('');
     }
   };
 
   const handleUpdateAplicativo = async (id) => {
     const aplicativo = { nome, custoMensal };
 
-    const response = await fetch(`http://localhost:8080/servcad/aplicativos/${id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(aplicativo),
-    });
+    try {
+      const response = await fetch(`http://localhost:8080/servcad/aplicativos/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(aplicativo),
+      });
 
-    if (response.ok) {
-      alert('Aplicativo atualizado com sucesso!');
-      setNome('');
-      setCustoMensal('');
-      fetch('http://localhost:8080/servcad/aplicativos')
-        .then(response => response.json())
-        .then(data => setAplicativos(data));
-    } else {
-      alert('Erro ao atualizar aplicativo');
+      if (response.ok) {
+        setSuccess('Aplicativo atualizado com sucesso!');
+        setError('');
+        setNome('');
+        setCustoMensal('');
+        fetchAplicativos();
+      } else {
+        throw new Error('Erro ao atualizar aplicativo');
+      }
+    } catch (error) {
+      console.error('Erro ao atualizar aplicativo:', error);
+      setError('Erro ao atualizar aplicativo');
+      setSuccess('');
     }
   };
 
   return (
-    <div>
-      <h1>Aplicativos</h1>
-      <input
-        type="text"
-        placeholder="Nome"
-        value={nome}
-        onChange={(e) => setNome(e.target.value)}
-      />
-      <input
-        type="number"
-        placeholder="Custo Mensal"
-        value={custoMensal}
-        onChange={(e) => setCustoMensal(e.target.value)}
-      />
-      <button onClick={handleAddAplicativo}>Adicionar Aplicativo</button>
-      <button onClick={() => navigate('/')}>Voltar</button>
-      <h2>Lista de Aplicativos</h2>
-      <ul>
+    <div className="aplicativos-container">
+      <h1 className="header">Aplicativos</h1>
+      {error && <p className="error-message">{error}</p>}
+      {success && <p className="success-message">{success}</p>}
+      <div className="form-group">
+        <label>Nome</label>
+        <input
+          type="text"
+          className="input-field"
+          placeholder="Nome"
+          value={nome}
+          onChange={(e) => setNome(e.target.value)}
+        />
+      </div>
+      <div className="form-group">
+        <label>Custo Mensal</label>
+        <input
+          type="number"
+          className="input-field"
+          placeholder="Custo Mensal"
+          value={custoMensal}
+          onChange={(e) => setCustoMensal(e.target.value)}
+        />
+      </div>
+      <button className="button" onClick={handleAddAplicativo}>Adicionar Aplicativo</button>
+      <button className="button cancel" onClick={() => navigate('/')}>Voltar</button>
+      <h2 className="header">Lista de Aplicativos</h2>
+      <ul className="aplicativos-list">
         {aplicativos.map((aplicativo) => (
-          <li key={aplicativo.id}>
+          <li key={aplicativo.id} className="list-item">
             {aplicativo.nome} - {aplicativo.custoMensal}
-            <button onClick={() => handleUpdateAplicativo(aplicativo.id)}>Editar</button>
-            <button onClick={() => handleDeleteAplicativo(aplicativo.id)}>Deletar</button>
+            <div className="button-group">
+              <button className="button button-edit" onClick={() => handleUpdateAplicativo(aplicativo.id)}>Editar</button>
+              <button className="button button-delete" onClick={() => handleDeleteAplicativo(aplicativo.id)}>Deletar</button>
+            </div>
           </li>
         ))}
       </ul>

@@ -8,6 +8,7 @@ function Pagamentos() {
   const [assinaturas, setAssinaturas] = useState([]);
   const [pagamento, setPagamento] = useState({ valorPago: 0, codPromocao: null, codass: null });
   const [dataPagamento, setDataPagamento] = useState('');
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -99,7 +100,7 @@ function Pagamentos() {
 
   const savePagamento = async () => {
     if (!dataPagamento) {
-      alert('Por favor, insira uma data válida.');
+      setError('Por favor, insira uma data válida.');
       return;
     }
 
@@ -124,12 +125,13 @@ function Pagamentos() {
         setPagamentos([...pagamentos, updatedPagamento]);
         setPagamento({ valorPago: 0, codPromocao: null, codass: null });
         setDataPagamento('');
+        setError('');
       } else {
-        alert('Falha ao salvar pagamento');
+        setError('Falha ao salvar pagamento');
       }
     } catch (error) {
       console.error('Erro ao salvar pagamento:', error);
-      alert('Erro ao salvar pagamento');
+      setError('Erro ao salvar pagamento');
     }
   };
 
@@ -144,17 +146,18 @@ function Pagamentos() {
       if (response.ok) {
         setPagamentos(pagamentos.filter(p => p.id !== id));
       } else {
-        alert('Falha ao deletar pagamento');
+        setError('Falha ao deletar pagamento');
       }
     } catch (error) {
       console.error('Erro ao deletar pagamento:', error);
-      alert('Erro ao deletar pagamento');
+      setError('Erro ao deletar pagamento');
     }
   };
 
   return (
     <div className="pagamentos-container">
       <h1 className="header">Gerenciar Pagamentos</h1>
+      {error && <p className="error-message">{error}</p>}
       <div className="form-group">
         <label>Assinatura</label>
         <select className="input-field" name="codass" value={pagamento.codass || ''} onChange={handleAssinaturaChange}>
@@ -182,13 +185,15 @@ function Pagamentos() {
         <input type="date" className="input-field" name="dataPagamento" value={dataPagamento} onChange={e => setDataPagamento(e.target.value)} />
       </div>
       <button className="button" onClick={savePagamento}>Adicionar Pagamento</button>
-      <button onClick={() => navigate('/')}>Voltar</button>
+      <button className="button cancel" onClick={() => navigate('/')}>Voltar</button>
 
       <ul className="pagamentos-list">
         {Array.isArray(pagamentos) && pagamentos.length > 0 ? pagamentos.map(pag => (
           <li key={pag.id} className="list-item">
             Valor: {pag.valorPago}, Data: {new Date(pag.dataPagamento).toLocaleDateString()}, Promoção: {pag.promocao ? pag.promocao.descricao : 'Nenhuma'}
-            <button className="button" onClick={() => deletePagamento(pag.id)}>Deletar</button>
+            <div className="button-group">
+              <button className="button button-delete" onClick={() => deletePagamento(pag.id)}>Deletar</button>
+            </div>
           </li>
         )) : <p>Nenhum pagamento encontrado.</p>}
       </ul>

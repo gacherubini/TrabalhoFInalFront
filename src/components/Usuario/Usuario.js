@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import './Usuario.css';
 
 function Usuarios() {
   const [usuarios, setUsuarios] = useState([]);
-  const [usuario, setUsuario] = useState({ nome: '', email: '' });
+  const [usuario, setUsuario] = useState({ usuario: '', senha: '' });
   const [editMode, setEditMode] = useState(false);
   const [usuarioId, setUsuarioId] = useState(null);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -17,17 +20,16 @@ function Usuarios() {
       const response = await fetch('http://localhost:8080/servcad/usuarios');
       if (response.ok) {
         const data = await response.json();
-        console.log('Usuários recebidos:', data);
         if (Array.isArray(data)) {
           setUsuarios(data);
         } else {
-          console.error('Os dados recebidos não são um array:', data);
+          setError('Os dados recebidos não são um array');
         }
       } else {
-        console.error('Falha ao buscar usuários, status:', response.status);
+        setError(`Falha ao buscar usuários, status: ${response.status}`);
       }
     } catch (error) {
-      console.error('Erro na requisição de usuários:', error);
+      setError(`Erro na requisição de usuários: ${error.message}`);
     }
   };
 
@@ -37,7 +39,7 @@ function Usuarios() {
   };
 
   const saveOrUpdateUsuario = async () => {
-    if (!usuario.nome || !usuario.email) {
+    if (!usuario.usuario || !usuario.senha) {
       alert('Por favor, preencha todos os campos.');
       return;
     }
@@ -45,7 +47,6 @@ function Usuarios() {
     const endpoint = editMode ? `http://localhost:8080/servcad/usuarios/${usuarioId}` : 'http://localhost:8080/servcad/usuarios';
 
     try {
-      console.log('Enviando usuário:', JSON.stringify(usuario));
       const response = await fetch(endpoint, {
         method,
         headers: { 'Content-Type': 'application/json' },
@@ -53,20 +54,21 @@ function Usuarios() {
       });
       if (response.ok) {
         const updatedUser = await response.json();
-        console.log('Usuário salvo:', updatedUser);
         setUsuarios(prev =>
           editMode
             ? prev.map(u => (u.id === updatedUser.id ? updatedUser : u))
             : [...prev, updatedUser]
         );
-        setUsuario({ nome: '', email: '' });
+        setUsuario({ usuario: '', senha: '' });
         setEditMode(false);
         setUsuarioId(null);
+        setSuccess('Usuário salvo com sucesso!');
+        setError('');
       } else {
-        console.error('Falha ao salvar usuário, status:', response.status);
+        setError(`Falha ao salvar usuário, status: ${response.status}`);
       }
     } catch (error) {
-      console.error('Erro ao salvar usuário:', error);
+      setError(`Erro ao salvar usuário: ${error.message}`);
     }
   };
 
@@ -74,7 +76,7 @@ function Usuarios() {
     const user = usuarios.find(u => u.id === id);
     setEditMode(true);
     setUsuarioId(id);
-    setUsuario({ nome: user.nome, email: user.email });
+    setUsuario({ usuario: user.usuario, senha: user.senha });
   };
 
   const deleteUsuario = async (id) => {
@@ -85,43 +87,56 @@ function Usuarios() {
       });
       if (response.ok) {
         setUsuarios(usuarios.filter(u => u.id !== id));
+        setSuccess('Usuário deletado com sucesso!');
+        setError('');
       } else {
-        console.error('Falha ao deletar usuário, status:', response.status);
+        setError(`Falha ao deletar usuário, status: ${response.status}`);
       }
     } catch (error) {
-      console.error('Erro ao deletar usuário:', error);
+      setError(`Erro ao deletar usuário: ${error.message}`);
     }
   };
 
   return (
-    <div>
-      <h1>Gerenciar Usuários</h1>
-      <div>
+    <div className="usuarios-container">
+      <h1 className="header">Gerenciar Usuários</h1>
+      {error && <p className="error-message">{error}</p>}
+      {success && <p className="success-message">{success}</p>}
+      <div className="form-group">
+        <label>Usuário</label>
         <input
           type="text"
-          name="nome"
-          value={usuario.nome}
+          name="usuario"
+          value={usuario.usuario}
           onChange={handleInputChange}
+          className="input-field"
           placeholder="Nome do usuário"
         />
-        <input
-          type="email"
-          name="email"
-          value={usuario.email}
-          onChange={handleInputChange}
-          placeholder="Email do usuário"
-        />
-        <button onClick={saveOrUpdateUsuario}>
-          {editMode ? 'Atualizar Usuário' : 'Adicionar Usuário'}
-        </button>
-        <button onClick={() => navigate('/')}>Voltar</button>
       </div>
-      <ul>
+      <div className="form-group">
+        <label>Senha</label>
+        <input
+          type="password"
+          name="senha"
+          value={usuario.senha}
+          onChange={handleInputChange}
+          className="input-field"
+          placeholder="Senha do usuário"
+        />
+      </div>
+      <button className="button" onClick={saveOrUpdateUsuario}>
+        {editMode ? 'Atualizar Usuário' : 'Adicionar Usuário'}
+      </button>
+      <button className="button cancel" onClick={() => navigate('/')}>Voltar</button>
+      <h2 className="header">Lista de Usuários</h2>
+      <ul className="usuarios-list">
         {usuarios.map(user => (
-          <li key={user.id}>
-            {user.nome} ({user.email})
-            <button onClick={() => editUsuario(user.id)}>Editar</button>
-            <button onClick={() => deleteUsuario(user.id)}>Deletar</button>
+          <li key={user.id} className="list-item">
+            <span>{user.usuario}</span>
+            <div className="button-group">
+              <button className="button button-edit" onClick={() => editUsuario(user.id)}>Editar</button>
+              <button className="button button-delete" onClick={() => deleteUsuario(user.id)}>Deletar</button>
+            </div>
           </li>
         ))}
       </ul>
