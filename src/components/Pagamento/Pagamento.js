@@ -9,6 +9,7 @@ function Pagamentos() {
   const [pagamento, setPagamento] = useState({ valorPago: 0, codPromocao: null, codass: null });
   const [dataPagamento, setDataPagamento] = useState('');
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -126,6 +127,7 @@ function Pagamentos() {
         setPagamento({ valorPago: 0, codPromocao: null, codass: null });
         setDataPagamento('');
         setError('');
+        setSuccess('Pagamento salvo com sucesso!');
       } else {
         setError('Falha ao salvar pagamento');
       }
@@ -145,6 +147,7 @@ function Pagamentos() {
 
       if (response.ok) {
         setPagamentos(pagamentos.filter(p => p.id !== id));
+        setSuccess('Pagamento deletado com sucesso!');
       } else {
         setError('Falha ao deletar pagamento');
       }
@@ -158,6 +161,7 @@ function Pagamentos() {
     <div className="pagamentos-container">
       <h1 className="header">Gerenciar Pagamentos</h1>
       {error && <p className="error-message">{error}</p>}
+      {success && <p className="success-message">{success}</p>}
       <div className="form-group">
         <label>Assinatura</label>
         <select className="input-field" name="codass" value={pagamento.codass || ''} onChange={handleAssinaturaChange}>
