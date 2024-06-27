@@ -15,7 +15,7 @@ function Promocoes() {
 
   const fetchPromocoes = async () => {
     try {
-      const response = await fetch('http://localhost:8080/servcad/promocoes');
+      const response = await fetch('https://trabalho-final-b31a5e4858be.herokuapp.com/servcad/promocoes');
       const data = await response.json();
       if (Array.isArray(data)) {
         setPromocoes(data);
@@ -35,7 +35,7 @@ function Promocoes() {
 
   const saveOrUpdatePromocao = async () => {
     const method = editMode ? 'PUT' : 'POST';
-    const endpoint = editMode ? `http://localhost:8080/servcad/promocoes/${promocaoId}` : 'http://localhost:8080/servcad/promocoes';
+    const endpoint = editMode ? `https://trabalho-final-b31a5e4858be.herokuapp.com/servcad/promocoes/${promocaoId}` : 'https://trabalho-final-b31a5e4858be.herokuapp.com/servcad/promocoes';
 
     try {
       const response = await fetch(endpoint, {
@@ -69,7 +69,7 @@ function Promocoes() {
     if (!window.confirm('Deseja realmente excluir esta promoção?')) return;
 
     try {
-      const response = await fetch(`http://localhost:8080/servcad/promocoes/${id}`, {
+      const response = await fetch(`https://trabalho-final-b31a5e4858be.herokuapp.com/servcad/promocoes/${id}`, {
         method: 'DELETE'
       });
 

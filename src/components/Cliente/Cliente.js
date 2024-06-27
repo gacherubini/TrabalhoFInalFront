@@ -13,7 +13,7 @@ function Clientes() {
 
   const fetchClientes = async () => {
     try {
-      const response = await fetch('http://localhost:8080/servcad/clientes');
+      const response = await fetch('https://trabalho-final-b31a5e4858be.herokuapp.com/servcad/clientes');
       if (response.ok) {
         const data = await response.json();
         setClientes(data);
@@ -31,7 +31,7 @@ function Clientes() {
   const handleAddCliente = async () => {
     const cliente = { nome, email };
     try {
-      const response = await fetch('http://localhost:8080/servcad/clientes', {
+      const response = await fetch('https://trabalho-final-b31a5e4858be.herokuapp.com/servcad/clientes', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -54,7 +54,7 @@ function Clientes() {
   const handleUpdateCliente = async (id) => {
     const cliente = { nome, email };
     try {
-      const response = await fetch(`http://localhost:8080/servcad/clientes/${id}`, {
+      const response = await fetch(`https://trabalho-final-b31a5e4858be.herokuapp.com/servcad/clientes/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -76,7 +76,7 @@ function Clientes() {
 
   const handleDeleteCliente = async (id) => {
     try {
-      const response = await fetch(`http://localhost:8080/servcad/clientes/${id}`, {
+      const response = await fetch(`https://trabalho-final-b31a5e4858be.herokuapp.com/servcad/clientes/${id}`, {
         method: 'DELETE'
       });
 

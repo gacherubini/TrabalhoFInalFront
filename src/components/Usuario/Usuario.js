@@ -17,7 +17,7 @@ function Usuarios() {
 
   const fetchUsuarios = async () => {
     try {
-      const response = await fetch('http://localhost:8080/servcad/usuarios');
+      const response = await fetch('https://trabalho-final-b31a5e4858be.herokuapp.com/servcad/usuarios');
       if (response.ok) {
         const data = await response.json();
         if (Array.isArray(data)) {
@@ -44,7 +44,7 @@ function Usuarios() {
       return;
     }
     const method = editMode ? 'PUT' : 'POST';
-    const endpoint = editMode ? `http://localhost:8080/servcad/usuarios/${usuarioId}` : 'http://localhost:8080/servcad/usuarios';
+    const endpoint = editMode ? `https://trabalho-final-b31a5e4858be.herokuapp.com/servcad/usuarios/${usuarioId}` : 'https://trabalho-final-b31a5e4858be.herokuapp.com/servcad/usuarios';
 
     try {
       const response = await fetch(endpoint, {
@@ -82,7 +82,7 @@ function Usuarios() {
   const deleteUsuario = async (id) => {
     if (!window.confirm('Deseja realmente excluir este usuário?')) return;
     try {
-      const response = await fetch(`http://localhost:8080/servcad/usuarios/${id}`, {
+      const response = await fetch(`https://trabalho-final-b31a5e4858be.herokuapp.com/servcad/usuarios/${id}`, {
         method: 'DELETE'
       });
       if (response.ok) {

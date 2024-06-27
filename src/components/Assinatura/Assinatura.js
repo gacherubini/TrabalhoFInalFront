@@ -23,7 +23,7 @@ function Assinaturas() {
 
   const fetchAssinaturas = async () => {
     try {
-      const response = await fetch('http://localhost:8080/servcad/assinaturas');
+      const response = await fetch('https://trabalho-final-b31a5e4858be.herokuapp.com/servcad/assinaturas');
       if (response.ok) {
         const data = await response.json();
         setAssinaturas(data);
@@ -38,7 +38,7 @@ function Assinaturas() {
 
   const fetchClientes = async () => {
     try {
-      const response = await fetch('http://localhost:8080/servcad/clientes');
+      const response = await fetch('https://trabalho-final-b31a5e4858be.herokuapp.com/servcad/clientes');
       if (response.ok) {
         const data = await response.json();
         setClientes(data);
@@ -53,7 +53,7 @@ function Assinaturas() {
 
   const fetchAplicativos = async () => {
     try {
-      const response = await fetch('http://localhost:8080/servcad/aplicativos');
+      const response = await fetch('https://trabalho-final-b31a5e4858be.herokuapp.com/servcad/aplicativos');
       if (response.ok) {
         const data = await response.json();
         setAplicativos(data);
@@ -73,8 +73,8 @@ function Assinaturas() {
     };
     const method = editMode ? 'PUT' : 'POST';
     const endpoint = editMode
-      ? `http://localhost:8080/servcad/assinaturas/${currentAssinaturaId}`
-      : 'http://localhost:8080/servcad/assinaturas';
+      ? `https://trabalho-final-b31a5e4858be.herokuapp.com/servcad/assinaturas/${currentAssinaturaId}`
+      : 'https://trabalho-final-b31a5e4858be.herokuapp.com/servcad/assinaturas';
 
     try {
       const response = await fetch(endpoint, {
@@ -103,7 +103,7 @@ function Assinaturas() {
   const handleDeleteAssinatura = async (id) => {
     if (window.confirm('Tem certeza que deseja deletar esta assinatura?')) {
       try {
-        const response = await fetch(`http://localhost:8080/servcad/assinaturas/${id}`, {
+        const response = await fetch(`https://trabalho-final-b31a5e4858be.herokuapp.com/servcad/assinaturas/${id}`, {
           method: 'DELETE',
         });
 

@@ -24,7 +24,7 @@ function Pagamentos() {
 
   const fetchPagamentos = async () => {
     try {
-      const response = await fetch('http://localhost:8080/servcad/pagamentos');
+      const response = await fetch('https://trabalho-final-b31a5e4858be.herokuapp.com/servcad/pagamentos');
       const data = await response.json();
       if (Array.isArray(data)) {
         setPagamentos(data);
@@ -39,7 +39,7 @@ function Pagamentos() {
 
   const fetchPromocoes = async () => {
     try {
-      const response = await fetch('http://localhost:8080/servcad/promocoes');
+      const response = await fetch('https://trabalho-final-b31a5e4858be.herokuapp.com/servcad/promocoes');
       const data = await response.json();
       if (Array.isArray(data)) {
         setPromocoes(data);
@@ -54,7 +54,7 @@ function Pagamentos() {
 
   const fetchAssinaturas = async () => {
     try {
-      const response = await fetch('http://localhost:8080/servcad/assinaturas');
+      const response = await fetch('https://trabalho-final-b31a5e4858be.herokuapp.com/servcad/assinaturas');
       const data = await response.json();
       if (Array.isArray(data)) {
         setAssinaturas(data);
@@ -115,7 +115,7 @@ function Pagamentos() {
     };
 
     try {
-      const response = await fetch('http://localhost:8080/servcad/registrarpagamento', {
+      const response = await fetch('https://trabalho-final-b31a5e4858be.herokuapp.com/servcad/registrarpagamento', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(pagamentoData)
@@ -141,7 +141,7 @@ function Pagamentos() {
     if (!window.confirm('Deseja realmente excluir este pagamento?')) return;
 
     try {
-      const response = await fetch(`http://localhost:8080/servcad/pagamentos/${id}`, {
+      const response = await fetch(`https://trabalho-final-b31a5e4858be.herokuapp.com/servcad/pagamentos/${id}`, {
         method: 'DELETE'
       });
 

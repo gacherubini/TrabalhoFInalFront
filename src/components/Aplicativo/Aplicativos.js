@@ -16,7 +16,7 @@ function Aplicativos() {
 
   const fetchAplicativos = async () => {
     try {
-      const response = await fetch('http://localhost:8080/servcad/aplicativos');
+      const response = await fetch('https://trabalho-final-b31a5e4858be.herokuapp.com/servcad/aplicativos');
       const data = await response.json();
       setAplicativos(data);
     } catch (error) {
@@ -29,7 +29,7 @@ function Aplicativos() {
     const aplicativo = { nome, custoMensal };
 
     try {
-      const response = await fetch('http://localhost:8080/servcad/aplicativos', {
+      const response = await fetch('https://trabalho-final-b31a5e4858be.herokuapp.com/servcad/aplicativos', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -55,7 +55,7 @@ function Aplicativos() {
 
   const handleDeleteAplicativo = async (id) => {
     try {
-      const response = await fetch(`http://localhost:8080/servcad/aplicativos/${id}`, {
+      const response = await fetch(`https://trabalho-final-b31a5e4858be.herokuapp.com/servcad/aplicativos/${id}`, {
         method: 'DELETE',
       });
 
@@ -77,7 +77,7 @@ function Aplicativos() {
     const aplicativo = { nome, custoMensal };
 
     try {
-      const response = await fetch(`http://localhost:8080/servcad/aplicativos/${id}`, {
+      const response = await fetch(`https://trabalho-final-b31a5e4858be.herokuapp.com/servcad/aplicativos/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
